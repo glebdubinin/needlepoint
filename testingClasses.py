@@ -1,8 +1,8 @@
 class Container():
-    def __init__(self, parent, children, neighbors, name):
+    def __init__(self, parent, neighbors, name):
         self.parent = parent
-        self.children = children
-        self.neighbors = neighbors
+        self.neighbors = neighbors # neighboring places and rooms that can be entered
+        self.items = {}
         self.name = name
 
 class Player():

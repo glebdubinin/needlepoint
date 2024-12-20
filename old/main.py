@@ -58,7 +58,8 @@ def actOnCommands(components):
         goto(player.room, components[1])
     elif components[0] in commands["use"]:
         #gameTime is managed within useFunc
-        useFunc(components)
+        #useFunc(components)
+        pass
 
 
 
