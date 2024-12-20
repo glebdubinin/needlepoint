@@ -1,0 +1,47 @@
+# Matchbox
+
+### types of rooms:
+
+- bedroom
+- living room
+- kitchen
+- laundry room
+- toilet
+- office
+- 
+
+### location types:
+
+- house
+
+### building types:
+
+- apartment / hotels
+- private home
+- supermarket
+- school
+
+### items:
+
+- 
+
+### storage units:
+
+- closet
+- bedside table
+
+
+### other random notes
+
+
+maybe you could make an engine to tell apart similar words and terms by splitting the strings
+of words of what someone put as their command and comparing it to other things that 
+could've been said considering the context, and comparing how many items in that list
+of letters varies between the two variations of objects?
+
+### things left to make
+- make a system that can read and parse the gamestate saved in the form of csv files
+- make an engine to generate gamestates and save files randomly, after you've developed the variations of rooms n things
+
+
+Gleb Dubinin
