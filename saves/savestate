@@ -1,0 +1,27 @@
+{
+  "player": {
+    "lastSaved": "21/12/2024 20:45:10",
+    "name": "",
+    "location": "2",
+    "inventory": {},
+    "inventoryExpander": null
+  },
+  "world": {
+    "1": {
+      "locID": 1,
+      "neighbors": [
+        2
+      ],
+      "items": {},
+      "name": "livingroom"
+    },
+    "2": {
+      "locID": 2,
+      "neighbors": [
+        1
+      ],
+      "items": {},
+      "name": "bedroom"
+    }
+  }
+}

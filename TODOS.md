@@ -1,8 +1,10 @@
 # Main list
 - [x] Movement between containers
-- [ ] Inventory
-- [ ] Picking up items
+- [x] Inventory
+- [x] Picking up items
 - [ ] dropping items
+- [x] converting to locationIDs
+- [ ] forming sequential locationIDs for every new location automatically generated
 - [ ] save the game to and from CSV files
 - [ ] inventory limits
 - [ ] general "use item" function
