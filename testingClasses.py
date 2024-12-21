@@ -1,5 +1,5 @@
 class Container():
-    def __init__(self, locID, neighbors, name):
+    def __init__(self, locID, neighbors, items, name):
         self.locID = locID
         self.neighbors = neighbors # neighboring places and rooms that can be entered
         self.items = {}

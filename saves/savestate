@@ -13,7 +13,7 @@
         2
       ],
       "items": {},
-      "name": "livingroom"
+      "name": "place1"
     },
     "2": {
       "locID": 2,
@@ -21,7 +21,7 @@
         1
       ],
       "items": {},
-      "name": "bedroom"
+      "name": "place2"
     }
   }
 }

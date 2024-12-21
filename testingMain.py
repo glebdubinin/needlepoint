@@ -21,8 +21,8 @@ def nextLocID(): ## FIND OUT IF THIS WORKS #TODO
     locationIDCounter += 1
     return locationIDCounter
 
-livingroom = Container(locID = nextLocID(), neighbors=[], name = "livingroom")
-bedroom = Container(locID = nextLocID(), neighbors=[], name = "bedroom")
+livingroom = Container(locID = nextLocID(), neighbors=[], items={}, name = "livingroom")
+bedroom = Container(locID = nextLocID(), neighbors=[], items={}, name = "bedroom")
 
 livingroom.neighbors.append(copy.deepcopy(bedroom.locID))
 bedroom.neighbors.append(copy.deepcopy(livingroom.locID))
@@ -92,8 +92,10 @@ def getRoomNeighborIDs(roomID): #takes the id of a given room, returns a list of
     return neighbors
 
 def goto(placeto, player): # take the id of the place that the player would like to go to, and the current player object. modify them accordingly if possible.
-    for neighbor in getRoomNeighborIDs(locations[player.location]):
-        if placeto == neighbor:
+    #print(f"placeto: {placeto}")
+    for neighbor in getRoomNeighborIDs(player.location):
+        #print(f"neighbor: {neighbor}")
+        if placeto == locations[neighbor].name:
             player.location = neighbor
             print(f"You went to the {locations[neighbor].name} ")
             return True
@@ -137,6 +139,17 @@ def saveGame(player, locations, usermove):
         with open(f"saves/savestate{usermove[1]}", "w+") as f:
             json.dump(gamedata, f, indent=2)
 
+def loadGame(filename = ""):
+    try:
+        with open(f"saves/savestate{filename}", "r") as f:
+            data = json.load(f)
+            return data
+    except FileNotFoundError:
+        print("That save doesn't exit. ")
+
+
+
+
 #░▒▓██████████████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░▒▓███████▓▒░  
 #░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
 #░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
@@ -147,7 +160,7 @@ def saveGame(player, locations, usermove):
 
 
 def main():
-    print("executing def main")
+    #print("executing def main")
     playing = True
     while playing:
         usermove = getInput("What would you like to do next?  ")
@@ -165,10 +178,11 @@ def main():
 
         elif usermove[0] in commands["look"]:
             print(f"You are in the {locations[player.location].name}")
+            #print(f"locations: {locations}")
             print("You can go to:")
-            for neighbor in getRoomNeighborIDs(player.location): ##DONE TO HERE
+            for neighbor in getRoomNeighborIDs(player.location):
                 print(f" - {locations[neighbor].name}")
-            if locations[player.location].items is not None: 
+            if locations[player.location].items is not {}: 
                 print("And you can see:")
                 for item in locations[player.location].items:
                     print(f" - {item.name}")
@@ -195,5 +209,27 @@ def main():
                     print(f" - untitled save from ") #DATE AND TIME
                 else:
                     print(f" - {file.strip('savestate')} from ") #DATE AND TIME
+
+        elif usermove[0] in commands["load"]:
+            if len(usermove) == 2:
+                gamestate = loadGame(usermove[1])
+            else:
+                gamestate = loadGame()
+            #print(gamestate)
+            player.name = gamestate["player"]["name"]
+            player.location = int(gamestate["player"]["location"])
+            player.inventory = gamestate["player"]["inventory"]
+            player.inventoryExpander = gamestate["player"]["inventoryExpander"]
+
+            locations.clear()
+
+            for location in gamestate["world"]:
+                newLoc = Container(locID = int(location), 
+                                   neighbors = gamestate["world"][location]["neighbors"], 
+                                   items = gamestate["world"][location]["items"],
+                                   name = gamestate["world"][location]["name"])
+                locations[int(location)] = newLoc
+                
+                
 
 main()

@@ -5,7 +5,7 @@
 - [ ] dropping items
 - [x] converting to locationIDs
 - [ ] forming sequential locationIDs for every new location automatically generated
-- [ ] save the game to and from CSV files
+- [x] save the game to and from JSON files
 - [ ] inventory limits
 - [ ] general "use item" function
 - [ ] health
