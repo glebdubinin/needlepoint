@@ -31,7 +31,6 @@ locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
 player = Player()
 player.location = bedroom.locID
 
-buildings = {}
 rooms = {}
 items = {}
 

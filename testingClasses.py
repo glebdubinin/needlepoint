@@ -3,6 +3,8 @@ class Container():
         self.locID = locID
         self.neighbors = neighbors # neighboring places and rooms that can be entered
         self.structure = structure # string label for what building / structure category the container belongs do
+        self.isexit = None
+        self.undeadRange = (0, 0) # must be corrected from two variables into one when importing
         self.items = {}
         self.name = name
 

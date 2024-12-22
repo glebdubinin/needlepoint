@@ -1,6 +1,70 @@
 {
-    "locations" : {
-
+    "structures" : {
+        "house" : {
+            "entryway" : {
+                "neighbors" : ["hall"],
+                "isexit" : true,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 1
+            },
+            "hall" : {
+                "neighbors" : ["entryway", "kitchen", "bathroom", "lounge", "office", "livingroom", "diningroom", "bedroom"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            },
+            "bathroom" : {
+                "neighbors" : ["hall", "bathroom"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 1
+            },
+            "lounge" : {
+                "neighbors" : ["hall", "diningroom", "livingroom", "office"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            },
+            "office" : {
+                "neighbors" : ["hall", "diningroom", "lounge", "livingroom"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            },
+            "livingroom" : {
+                "neighbors" : ["hall", "diningroom", "lounge", "office"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            },
+            "diningroom" : {
+                "neighbors" : ["hall", "lounge", "office", "livingroom"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            },
+            "bedroom" : {
+                "neighbors" : ["hall", "bathroom"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            },
+            "kitchen" : {
+                "neighbors" : ["hall"],
+                "isexit" : false,
+                "items" : [],
+                "undeadmin" : 0,
+                "undeadmax" : 2
+            }
+        }
     },
     "items" : {
 
