@@ -1,7 +1,8 @@
 class Container():
-    def __init__(self, locID, neighbors, items, name):
+    def __init__(self, locID, neighbors, structure, name):
         self.locID = locID
         self.neighbors = neighbors # neighboring places and rooms that can be entered
+        self.structure = structure # string label for what building / structure category the container belongs do
         self.items = {}
         self.name = name
 

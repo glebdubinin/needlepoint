@@ -20,8 +20,8 @@ def nextLocID():
     locationIDCounter += 1
     return locationIDCounter
 
-livingroom = Container(locID = nextLocID(), neighbors=[], items={}, name = "livingroom")
-bedroom = Container(locID = nextLocID(), neighbors=[], items={}, name = "bedroom")
+livingroom = Container(locID = nextLocID(), neighbors=[], structure="house",  name = "livingroom")
+bedroom = Container(locID = nextLocID(), neighbors=[], structure="house", name = "bedroom")
 
 livingroom.neighbors.append(copy.deepcopy(bedroom.locID))
 bedroom.neighbors.append(copy.deepcopy(livingroom.locID))
@@ -31,16 +31,20 @@ locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
 player = Player()
 player.location = bedroom.locID
 
+buildings = {}
+rooms = {}
+items = {}
 
 commands = {"go" : {"go", "goto", "move", "moveto"},
             "grab" : {"grab", "pickup", "take", "yoink", "snatch", "snag", "grasp", "snatch"},
             "drop" : {"drop", "put down", "leave", "leave behind"},
             "use" : {"use", "apply", "utilise", "check"},
-            "exit" : {"exit"},
+            "quit" : {"quit"},
             "look" : {"look", "seek", "search", "seek", "look", "gaze", "glance", "stare", "peer", "survey", "scan", "peruse"},
             "save" : {"save"},
             "load" : {"load"},
-            "saves" : {"saves", "savestates"}}
+            "saves" : {"saves", "savestates"},
+            "reload" : {"reload", "reboot", "restart"}}
 
 
 inventoryCapacity = {"Nothing" : 2,
@@ -56,6 +60,14 @@ inventoryCapacity = {"Nothing" : 2,
 #░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░ 
 #░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░ 
 #░▒▓█▓▒░       ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░  ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░  
+
+def initData(dataFile="gamedata"):
+    try:
+        with open(f"{dataFile}.json", "r") as f:
+            data = json.load(f)
+            return data
+    except FileNotFoundError:
+        print("No such game data exists. ")
 
 def getInput(line):
     quote = input(line)+" "
@@ -123,6 +135,7 @@ def saveGame(player, locations, usermove):
             str(location) : {"locID" : location,
                             "neighbors" : locations[location].neighbors,
                             "items" : locations[location].items,
+                            "structure" : locations[location].structure,
                             "name" : locations[location].name} for location in locations
         }
     }
@@ -144,7 +157,7 @@ def loadGame(filename = ""):
             data = json.load(f)
             return data
     except FileNotFoundError:
-        print("That save doesn't exit. ")
+        print("That save doesn't exist. ")
 
 
 
@@ -159,6 +172,13 @@ def loadGame(filename = ""):
 
 
 def main():
+    ### initialisation
+    if not initRunBefore:
+        initRunBefore = True
+        gamedata = initData()
+
+
+
     #print("executing def main")
     playing = True
     while playing:
@@ -172,7 +192,7 @@ def main():
             #        player.location = neighbor
             #        print("You have moved to the " + neighbor.name)
 
-        elif usermove[0] in commands["exit"]:
+        elif usermove[0] in commands["quit"]:
             playing = False
 
         elif usermove[0] in commands["look"]:
@@ -227,8 +247,9 @@ def main():
             for location in gamestate["world"]:
                 newLoc = Container(locID = int(location), 
                                    neighbors = gamestate["world"][location]["neighbors"], 
-                                   items = gamestate["world"][location]["items"],
+                                   structure = gamestate["world"][location]["structure"],
                                    name = gamestate["world"][location]["name"])
+                newLoc.items = gamestate["world"][location]["items"]
                 locations[int(location)] = newLoc
 
             if len(usermove) == 2:
@@ -236,6 +257,6 @@ def main():
             else:
                 print(f"loaded untitled save")
                 
-                
+initRunBefore = False                
 
 main()
