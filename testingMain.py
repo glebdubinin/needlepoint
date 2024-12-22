@@ -13,10 +13,9 @@ import copy
 #░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░  ░▒▓█▓▒░     
 
 
-
 locationIDCounter = 0
 
-def nextLocID(): ## FIND OUT IF THIS WORKS #TODO
+def nextLocID():
     global locationIDCounter
     locationIDCounter += 1
     return locationIDCounter
@@ -133,15 +132,15 @@ def saveGame(player, locations, usermove):
     except FileExistsError:
         pass
     if len(usermove) == 1:
-        with open(f"saves/savestate", "w+") as f:
+        with open(f"saves/savestate.json", "w+") as f:
             json.dump(gamedata, f, indent=2)
     else:
-        with open(f"saves/savestate{usermove[1]}", "w+") as f:
+        with open(f"saves/savestate{usermove[1]}.json", "w+") as f:
             json.dump(gamedata, f, indent=2)
 
 def loadGame(filename = ""):
     try:
-        with open(f"saves/savestate{filename}", "r") as f:
+        with open(f"saves/savestate{filename}.json", "r") as f:
             data = json.load(f)
             return data
     except FileNotFoundError:
@@ -205,10 +204,12 @@ def main():
                 #
                 # learn to read jsons, then get the "last saved" date and use it below
                 #
-                if file.strip('savestate') == "":
-                    print(f" - untitled save from ") #DATE AND TIME
+                properFilename = file.replace('savestate', '').replace('.json', '')
+                gamestate = loadGame(properFilename)
+                if properFilename == "":
+                    print(f" - untitled save from {gamestate['player']['lastSaved']}") #DATE AND TIME
                 else:
-                    print(f" - {file.strip('savestate')} from ") #DATE AND TIME
+                    print(f" - \"{properFilename}\" from {gamestate['player']['lastSaved']}") #DATE AND TIME
 
         elif usermove[0] in commands["load"]:
             if len(usermove) == 2:
@@ -229,6 +230,11 @@ def main():
                                    items = gamestate["world"][location]["items"],
                                    name = gamestate["world"][location]["name"])
                 locations[int(location)] = newLoc
+
+            if len(usermove) == 2:
+                print(f"loaded save \"{usermove[1]}\"")
+            else:
+                print(f"loaded untitled save")
                 
                 
 
