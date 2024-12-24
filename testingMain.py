@@ -3,6 +3,7 @@ from datetime import date, datetime
 import json
 import os
 import copy
+import random
 
 #░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓▒░▒▓████████▓▒░ 
 #░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░  ░▒▓█▓▒░     
@@ -14,6 +15,7 @@ import copy
 
 
 locationIDCounter = 0
+roomCount = 50
 
 def nextLocID():
     global locationIDCounter
@@ -31,8 +33,8 @@ locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
 player = Player()
 player.location = bedroom.locID
 
-rooms = {}
-items = {}
+rooms = set()
+items = set()
 
 commands = {"go" : {"go", "goto", "move", "moveto"},
             "grab" : {"grab", "pickup", "take", "yoink", "snatch", "snag", "grasp", "snatch"},
@@ -158,6 +160,107 @@ def loadGame(filename = ""):
     except FileNotFoundError:
         print("That save doesn't exist. ")
 
+def importData(gamedata):
+    global rooms
+    for structure in gamedata["structures"]:
+            for building in gamedata["structures"][structure]:
+                newLoc = gamedata["structures"][structure][building]
+                print(f"building: {building}")
+                newLocObj = ContainerFormat(neighbors = newLoc["neighbors"],
+                                        structure=structure,
+                                        isExit=newLoc["isExit"],
+                                        undeadRange=(newLoc["undeadmin"], newLoc["undeadmax"]),
+                                        items=newLoc["items"],
+                                        name=building)
+                print(f"neighbors   : {newLoc['neighbors']}")
+                print(f"structure   : {structure}")
+                print(f"isExit      : {newLoc['isExit']}")
+                print(f"undeadRange : {newLocObj.undeadRange}")
+                print(f"items       : {newLoc['items']}")
+                print(f"name        : {building}")
+                #print(dir(newLocObj))
+                rooms.add(newLocObj)
+    
+
+    #YET TO CREATE ITEM IMPORTS
+
+def generateWorld(seed):
+    random.seed(seed)
+    global locations
+    global rooms
+    roomsList = list(rooms)
+    global player
+    global items # YET TO ADD
+    global roomCount
+    randomRoom = random.choice(roomsList)
+    print(f"randomRoom : {randomRoom}")
+    initialRoom = Container(locID = nextLocID(),
+                            neighbors = [],
+                            structure = randomRoom.structure,
+                            name = randomRoom.name)
+    player.location = initialRoom.locID
+    locations[initialRoom.locID] = initialRoom
+    finalisedLocations = set()
+    mutableLocations = [initialRoom]
+    while len(locations) < roomCount:
+        for loc in mutableLocations:
+            if len(locations) < roomCount:
+                print(f"roomCount : {roomCount}")
+                print(f"len(locations) : {len(locations)}")
+                possibleRooms = copy.deepcopy(rooms)
+
+                for room in rooms: # remove all unsuitable room types
+                    if room.name == loc.name: # remove rooms of the same type
+                        try:
+                            possibleRooms.remove(room)
+                        except KeyError:
+                            pass
+
+                    for neighbour in loc.neighbors: # or of the neighbour's type
+                        #print(f"neighbour : {neighbour}")
+                        if room.name == locations[neighbour].name:
+                            try:
+                                possibleRooms.remove(room)
+                            except KeyError:
+                                pass
+
+                if len(possibleRooms) != 0:
+
+                    numToGen = random.randint(1, len(possibleRooms))
+
+                    possibleRoomsList = list(possibleRooms)
+
+                    for i in range(numToGen):
+
+                        newRoomType = random.choice(possibleRoomsList)
+                        newLoc = Container(locID = nextLocID(),
+                                        neighbors=[loc.locID],
+                                        structure=newRoomType.structure,
+                                        isExit = newRoomType.isExit,
+                                        undeadCount = random.randint(newRoomType.undeadRange[0], newRoomType.undeadRange[1]),
+                                        name = newRoomType.name)
+                        locations[newLoc.locID] = newLoc
+                        mutableLocations.append(newLoc)
+                        loc.neighbors.append(newLoc.locID)
+
+                #print(f"newMutableLocations : {mutableLocations}")
+                #print(f"loc                 : {loc}")
+                mutableLocations.remove(loc)
+                finalisedLocations.add(loc)
+
+
+            
+
+                
+            
+        
+
+        
+        
+
+
+
+
 
 
 
@@ -172,9 +275,17 @@ def loadGame(filename = ""):
 
 def main():
     ### initialisation
+    global initRunBefore
     if not initRunBefore:
+
+        #FIND GAMEDATA.JSON FILE
         initRunBefore = True
         gamedata = initData()
+
+        #FORMATTING IMPORTED DATA
+        importData(gamedata)
+        
+        generateWorld(random.randint(1, 1000))
 
 
 
@@ -195,10 +306,13 @@ def main():
             playing = False
 
         elif usermove[0] in commands["look"]:
+            print(locations)
             print(f"You are in the {locations[player.location].name}")
             #print(f"locations: {locations}")
             print("You can go to:")
             for neighbor in getRoomNeighborIDs(player.location):
+                #print(f"neighbor : {neighbor}")
+                #print(f"player.location : {player.location}")
                 print(f" - {locations[neighbor].name}")
             if locations[player.location].items is not {}: 
                 print("And you can see:")
