@@ -1,68 +1,66 @@
 {
     "structures" : {
         "house" : {
-            "entryway" : {
-                "neighbors" : ["hall"],
-                "isExit" : true,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 1
+            "rooms" : {
+                "entryway" : {
+                    "isExit" : true,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 1
+                },
+                "hall" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                },
+                "bathroom" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 1
+                },
+                "lounge" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                },
+                "office" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                },
+                "livingroom" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                },
+                "diningroom" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                },
+                "bedroom" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                },
+                "kitchen" : {
+                    "isExit" : false,
+                    "items" : [],
+                    "undeadmin" : 0,
+                    "undeadmax" : 2
+                }
             },
-            "hall" : {
-                "neighbors" : ["entryway", "kitchen", "bathroom", "lounge", "office", "livingroom", "diningroom", "bedroom"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
-            },
-            "bathroom" : {
-                "neighbors" : ["hall", "bathroom"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 1
-            },
-            "lounge" : {
-                "neighbors" : ["hall", "diningroom", "livingroom", "office"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
-            },
-            "office" : {
-                "neighbors" : ["hall", "diningroom", "lounge", "livingroom"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
-            },
-            "livingroom" : {
-                "neighbors" : ["hall", "diningroom", "lounge", "office"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
-            },
-            "diningroom" : {
-                "neighbors" : ["hall", "lounge", "office", "livingroom"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
-            },
-            "bedroom" : {
-                "neighbors" : ["hall", "bathroom"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
-            },
-            "kitchen" : {
-                "neighbors" : ["hall"],
-                "isExit" : false,
-                "items" : [],
-                "undeadmin" : 0,
-                "undeadmax" : 2
+            "templates" : {
+                "1" : { 
+                    "entryway" : ["hall"]
+                }
             }
         }
     },
