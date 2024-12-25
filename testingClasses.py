@@ -10,6 +10,7 @@ class Container(): # the object used to create actual containers (rooms) in the 
 
 class ContainerFormat(): # the object used to create templates of potential rooms that could be made
     def __init__(self, structure, name, undeadRange=(0, 0), isExit=False, items={}):
+        self.tempID = None
         self.structure = structure # string label for what building / structure category the container belongs do
         self.isExit = isExit # whether or not the room could be used as an exit from the building
         self.undeadRange = undeadRange # must be corrected from two variables into one when importing

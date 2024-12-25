@@ -33,7 +33,8 @@ locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
 player = Player()
 player.location = bedroom.locID
 
-rooms = {}  #  rooms = { "structure name" : {  } }
+rooms = {}  #  rooms = { "structure name" : { "room name" : { "traits" : "values" , ...} } }
+templates = {} # templates = { "structure name" : { "room name" : { "room type" : "id", "neighbors" : ["id", "id"], "name" : "bruh" } } }
 items = set()
 
 commands = {"go" : {"go", "goto", "move", "moveto"},
@@ -162,6 +163,7 @@ def loadGame(filename = ""):
 
 def importData(gamedata):
     global rooms
+    global templates
     for structure in gamedata["structures"]:
         rooms[structure] = {}
         for room in gamedata["structures"][structure]["rooms"]:
@@ -181,13 +183,13 @@ def importData(gamedata):
             #print(dir(newLocObj))
             rooms[structure][newRoomObj.name] = newRoomObj
 
+        templates[structure] = {}
         for template in gamedata["structures"][structure]["templates"]:
             newTemplate = gamedata["structures"][structure]["templates"][template]
-            
+            print(f"newTemplate : {newTemplate}")
 
+            templates[structure][template] = newTemplate
 
-
-    
 
     #YET TO CREATE ITEM IMPORTS
 
@@ -198,67 +200,6 @@ def generateWorld(seed):
     global player
     global items # YET TO ADD
 
-
-    global roomCount
-    randomBuilding = random.choice(list(rooms)) # gets the NAME of a random building
-    #print(f"randomBuilding : {randomBuilding}")
-    randomRoom = rooms[randomBuilding][random.choice(list(rooms[randomBuilding]))] # gets the OBJECT of a random room in randomBuilding
-    #print(f"randomRoom : {randomRoom}")
-
-    initialRoom = Container(locID = nextLocID(),
-                            neighbors = [],
-                            structure = randomRoom.structure,
-                            name = randomRoom.name)
-    
-    player.location = initialRoom.locID
-    locations[initialRoom.locID] = initialRoom
-    finalisedLocations = set()
-    mutableLocations = [initialRoom]
-    while len(locations) < roomCount:
-        for loc in mutableLocations:
-            if len(locations) < roomCount:
-                print(f"roomCount : {roomCount}")
-                print(f"len(locations) : {len(locations)}")
-                possibleRooms = copy.deepcopy(rooms)
-
-                for room in rooms: # remove all unsuitable room types
-                    if room.name == loc.name: # remove rooms of the same type
-                        try:
-                            possibleRooms.remove(room)
-                        except KeyError:
-                            pass
-
-                    for neighbour in loc.neighbors: # or of the neighbour's type
-                        #print(f"neighbour : {neighbour}")
-                        if room.name == locations[neighbour].name:
-                            try:
-                                possibleRooms.remove(room)
-                            except KeyError:
-                                pass
-
-                if len(possibleRooms) != 0:
-
-                    numToGen = random.randint(1, len(possibleRooms))
-
-                    possibleRoomsList = list(possibleRooms)
-
-                    for i in range(numToGen):
-
-                        newRoomType = random.choice(possibleRoomsList)
-                        newLoc = Container(locID = nextLocID(),
-                                        neighbors=[loc.locID],
-                                        structure=newRoomType.structure,
-                                        isExit = newRoomType.isExit,
-                                        undeadCount = random.randint(newRoomType.undeadRange[0], newRoomType.undeadRange[1]),
-                                        name = newRoomType.name)
-                        locations[newLoc.locID] = newLoc
-                        mutableLocations.append(newLoc)
-                        loc.neighbors.append(newLoc.locID)
-
-                #print(f"newMutableLocations : {mutableLocations}")
-                #print(f"loc                 : {loc}")
-                mutableLocations.remove(loc)
-                finalisedLocations.add(loc)
 
 
 

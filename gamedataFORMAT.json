@@ -2,7 +2,7 @@
     "structures" : {
         "structure type A" : {
             "rooms" : {
-                "room type ID" : {
+                "room type" : {
                     "isExit" : "true or false whether or not it's an exit to one layer up",
                     "items" : "list of items",
                     "undeadmin" : "minimum count of undead in one instance of this room",
@@ -20,7 +20,7 @@
             "templates" : {
                 "template ID" : {
                     "room instance ID" : {
-                        "type of room from formats above" : "room type ID",
+                        "type of room from formats above" : "room type",
                         "neighbors" : ["neighboring room instance ID"],
                         "otherTraitToChange" : "value"
                     }
