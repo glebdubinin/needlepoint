@@ -33,7 +33,7 @@ locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
 player = Player()
 player.location = bedroom.locID
 
-rooms = set()
+rooms = {}  #  rooms = { "structure name" : {  } }
 items = set()
 
 commands = {"go" : {"go", "goto", "move", "moveto"},
@@ -163,23 +163,30 @@ def loadGame(filename = ""):
 def importData(gamedata):
     global rooms
     for structure in gamedata["structures"]:
-            for building in gamedata["structures"][structure]:
-                newLoc = gamedata["structures"][structure][building]
-                print(f"building: {building}")
-                newLocObj = ContainerFormat(neighbors = newLoc["neighbors"],
-                                        structure=structure,
-                                        isExit=newLoc["isExit"],
-                                        undeadRange=(newLoc["undeadmin"], newLoc["undeadmax"]),
-                                        items=newLoc["items"],
-                                        name=building)
-                print(f"neighbors   : {newLoc['neighbors']}")
-                print(f"structure   : {structure}")
-                print(f"isExit      : {newLoc['isExit']}")
-                print(f"undeadRange : {newLocObj.undeadRange}")
-                print(f"items       : {newLoc['items']}")
-                print(f"name        : {building}")
-                #print(dir(newLocObj))
-                rooms.add(newLocObj)
+        rooms[structure] = {}
+        for room in gamedata["structures"][structure]["rooms"]:
+            newRoom = gamedata["structures"][structure]["rooms"][room]
+            print(f"building: {structure}")
+            print(f"newRoom : {newRoom}")
+            newRoomObj = ContainerFormat(structure=structure,
+                                    isExit=newRoom["isExit"],
+                                    undeadRange=(newRoom["undeadmin"], newRoom["undeadmax"]),
+                                    items=newRoom["items"],
+                                    name=room)
+            print(f"structure   : {structure}")
+            print(f"isExit      : {newRoom['isExit']}")
+            print(f"undeadRange : {newRoomObj.undeadRange}")
+            print(f"items       : {newRoom['items']}")
+            print(f"name        : {room}")
+            #print(dir(newLocObj))
+            rooms[structure][newRoomObj.name] = newRoomObj
+
+        for template in gamedata["structures"][structure]["templates"]:
+            newTemplate = gamedata["structures"][structure]["templates"][template]
+            
+
+
+
     
 
     #YET TO CREATE ITEM IMPORTS
@@ -188,16 +195,21 @@ def generateWorld(seed):
     random.seed(seed)
     global locations
     global rooms
-    roomsList = list(rooms)
     global player
     global items # YET TO ADD
+
+
     global roomCount
-    randomRoom = random.choice(roomsList)
-    print(f"randomRoom : {randomRoom}")
+    randomBuilding = random.choice(list(rooms)) # gets the NAME of a random building
+    #print(f"randomBuilding : {randomBuilding}")
+    randomRoom = rooms[randomBuilding][random.choice(list(rooms[randomBuilding]))] # gets the OBJECT of a random room in randomBuilding
+    #print(f"randomRoom : {randomRoom}")
+
     initialRoom = Container(locID = nextLocID(),
                             neighbors = [],
                             structure = randomRoom.structure,
                             name = randomRoom.name)
+    
     player.location = initialRoom.locID
     locations[initialRoom.locID] = initialRoom
     finalisedLocations = set()
@@ -247,19 +259,6 @@ def generateWorld(seed):
                 #print(f"loc                 : {loc}")
                 mutableLocations.remove(loc)
                 finalisedLocations.add(loc)
-
-
-            
-
-                
-            
-        
-
-        
-        
-
-
-
 
 
 

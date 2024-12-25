@@ -2,64 +2,122 @@
     "structures" : {
         "house" : {
             "rooms" : {
-                "entryway" : {
+                "a" : {
                     "isExit" : true,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 1
+                    "undeadmax" : 1,
+                    "name" : "entryway"
                 },
-                "hall" : {
+                "b" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "hall"
                 },
-                "bathroom" : {
+                "c" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 1
+                    "undeadmax" : 1,
+                    "name" : "bathroom"
                 },
-                "lounge" : {
+                "d" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "lounge"
                 },
-                "office" : {
+                "e" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "office"
                 },
-                "livingroom" : {
+                "f" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "livingroom"
                 },
-                "diningroom" : {
+                "g" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "diningroom"
                 },
-                "bedroom" : {
+                "h" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "bedroom"
                 },
-                "kitchen" : {
+                "i" : {
                     "isExit" : false,
                     "items" : [],
                     "undeadmin" : 0,
-                    "undeadmax" : 2
+                    "undeadmax" : 2,
+                    "name" : "kitchen"
                 }
             },
             "templates" : {
-                "1" : { 
-                    "entryway" : ["hall"]
+                "t1" : { 
+                    "1" : {
+                        "type" : "a",
+                        "name" : "entryway",
+                        "neighbors" : ["2"]
+                    },
+                    "2" : {
+                        "type" : "b",
+                        "name": "hall",
+                        "neighbors" : ["1"]
+                    },
+                    "3" : {
+                        "type" : "h",
+                        "name" : "bedroom",
+                        "neighbors" : ["2", "4"]
+                    },
+                    "4" : {
+                        "type" : "c",
+                        "name" : "bathroom",
+                        "neighbors" : ["2", "3"]
+                    },
+                    "5" : {
+                        "type" : "d",
+                        "name" : "lounge",
+                        "neighbors" : ["2"]
+                    },
+                    "6" : {
+                        "type" : "b",
+                        "name" : "backpassage",
+                        "neighbors" : ["5", "7", "8", "9"]
+                    },
+                    "7" : {
+                        "type" : "e",
+                        "name" : "office",
+                        "neighbors" : ["6"]
+                    },
+                    "8" : {
+                        "type" : "i",
+                        "name" : "kitchen",
+                        "neighbors" : ["6", "10"]
+                    },
+                    "9" : {
+                        "type" : "f",
+                        "name" : "livingroom",
+                        "neighbors" : ["6", "10"]
+                    },
+                    "10" : {
+                        "type" : "g",
+                        "name" : "diningroom",
+                        "neighbors" : ["8", "9"]
+                    }
                 }
             }
         }
