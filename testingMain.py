@@ -249,21 +249,6 @@ def generateWorld(seed):
                 finalisedLocations.add(loc)
 
 
-            
-
-                
-            
-        
-
-        
-        
-
-
-
-
-
-
-
 #░▒▓██████████████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░▒▓███████▓▒░  
 #░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
 #░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
@@ -306,7 +291,7 @@ def main():
             playing = False
 
         elif usermove[0] in commands["look"]:
-            print(locations)
+            #print(locations)
             print(f"You are in the {locations[player.location].name}")
             #print(f"locations: {locations}")
             print("You can go to:")
