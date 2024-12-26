@@ -15,6 +15,7 @@ import random
 
 
 locationIDCounter = 0
+tempInstanceIDCounter = 0
 roomCount = 50
 
 def nextLocID():
@@ -22,13 +23,19 @@ def nextLocID():
     locationIDCounter += 1
     return locationIDCounter
 
+def nextTempID():
+    global tempInstanceIDCounter
+    tempInstanceIDCounter += 1
+    return tempInstanceIDCounter
+
 livingroom = Container(locID = nextLocID(), neighbors=[], structure="house",  name = "livingroom")
 bedroom = Container(locID = nextLocID(), neighbors=[], structure="house", name = "bedroom")
 
 livingroom.neighbors.append(copy.deepcopy(bedroom.locID))
 bedroom.neighbors.append(copy.deepcopy(livingroom.locID))
 
-locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
+#locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
+locations = {}
 
 player = Player()
 player.location = bedroom.locID
@@ -95,7 +102,8 @@ def getInput(line):
 def getRoomNeighborIDs(roomID): #takes the id of a given room, returns a list of all the neighboring room ids
     neighbors = []
     for id in locations[roomID].neighbors:
-        neighbors.append(id)
+        neighbors.append(int(id))
+    print(f"neighbors : {neighbors}")
     return neighbors
 
 
@@ -199,8 +207,48 @@ def generateWorld(seed):
     global rooms
     global player
     global items # YET TO ADD
+    global templates
 
+    randomStruct = random.choice(list(templates))
+    randomTemplateObj = templates[randomStruct][random.choice(list(templates[randomStruct]))]
 
+    currentTemplateID = nextTempID()
+    for room in randomTemplateObj:
+        print(f"room: {room}, {randomTemplateObj[room]}\n\n")
+        newRoom = Container(locID = nextLocID(),
+                            templateID = room,
+                            instanceID = currentTemplateID,
+                            neighbors=[],
+                            intendedNeighbors = randomTemplateObj[room]["neighbors"],
+                            structure = randomStruct,
+                            name = randomTemplateObj[room]["name" if "name" in randomTemplateObj[room] else "type"])
+        print(f"Generating Room: ")
+        print(f"locID : {newRoom.locID}")
+        print(f"templateID : {newRoom.templateID}")
+        print(f"instanceID : {newRoom.instanceID}")
+        print(f"neighbors : {newRoom.neighbors}")
+        print(f"intendedNeighbors : {newRoom.intendedNeighbors}")
+        print(f"structure : {newRoom.structure}")
+        print(f"name : {newRoom.name}")
+        print(f"")
+        locations[newRoom.locID] = newRoom
+    player.location = locations[random.choice(list(locations))].locID
+
+    for locA in locations:
+        for locB in locations: # for every combination of two possible locations,
+            locationA = locations[locA]
+            locationB = locations[locB]
+            if locationA.instanceID == locationB.instanceID: # if they're from the same instance of a template,
+                #print(f"locationA.templateID : {locationA.templateID}")
+                #print(f"locationB.templateID : {locationB.templateID}")
+                #print(f"locationA.intendedNeighbors : {locationA.intendedNeighbors}")
+                if locationB.templateID in locationA.intendedNeighbors: # and they're meant to be neighbors
+                    print(f"{locationA.locID} connected to {locationB.locID}")
+                    if locationB.locID not in locationA.neighbors:
+                        locationA.neighbors.append(locationB.locID)   # connect them.
+                    if locationA.locID not in locationB.neighbors:
+                        locationB.neighbors.append(locationA.locID)
+    
 
 
 
@@ -227,6 +275,8 @@ def main():
         
         generateWorld(random.randint(1, 1000))
 
+        #os._exit(1)
+
 
 
     #print("executing def main")
@@ -246,7 +296,7 @@ def main():
             playing = False
 
         elif usermove[0] in commands["look"]:
-            print(locations)
+            #print(locations)
             print(f"You are in the {locations[player.location].name}")
             #print(f"locations: {locations}")
             print("You can go to:")

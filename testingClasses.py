@@ -1,7 +1,10 @@
 class Container(): # the object used to create actual containers (rooms) in the game
-    def __init__(self, locID, neighbors, structure, name, undeadCount=0, isExit=False, items={}):
+    def __init__(self, locID, neighbors, structure, name, templateID=None, instanceID=None, undeadCount=0, isExit=False, items={}, intendedNeighbors=[]):
+        self.templateID = templateID # ID copied from the template used to form the room
+        self.instanceID = instanceID # counter ID for what instance of a given template the room belongs to
         self.locID = locID
         self.neighbors = neighbors # neighboring places and rooms that can be entered
+        self.intendedNeighbors = intendedNeighbors
         self.structure = structure # string label for what building / structure category the container belongs do
         self.isExit = isExit
         self.undeadCount = undeadCount
@@ -10,7 +13,6 @@ class Container(): # the object used to create actual containers (rooms) in the 
 
 class ContainerFormat(): # the object used to create templates of potential rooms that could be made
     def __init__(self, structure, name, undeadRange=(0, 0), isExit=False, items={}):
-        self.tempID = None
         self.structure = structure # string label for what building / structure category the container belongs do
         self.isExit = isExit # whether or not the room could be used as an exit from the building
         self.undeadRange = undeadRange # must be corrected from two variables into one when importing
