@@ -1,11 +1,12 @@
 class Container(): # the object used to create actual containers (rooms) in the game
-    def __init__(self, locID, neighbors, structure, name, undeadCount=0, isExit=False, items={}):
+    def __init__(self, locID, neighbors, structure, name, coordinates, undeadCount=0, isExit=False, items={}):
         self.locID = locID
         self.neighbors = neighbors # neighboring places and rooms that can be entered
         self.structure = structure # string label for what building / structure category the container belongs do
         self.isExit = isExit
         self.undeadCount = undeadCount
         self.items = items
+        self.coordinates = coordinates # (X, Y) tuple holding coord values
         self.name = name
 
 class ContainerFormat(): # the object used to create templates of potential rooms that could be made

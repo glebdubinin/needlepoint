@@ -22,8 +22,8 @@ def nextLocID():
     locationIDCounter += 1
     return locationIDCounter
 
-livingroom = Container(locID = nextLocID(), neighbors=[], structure="house",  name = "livingroom")
-bedroom = Container(locID = nextLocID(), neighbors=[], structure="house", name = "bedroom")
+livingroom = Container(locID = nextLocID(), neighbors=[], structure="house",  name = "livingroom", coordinates = (0, 0))
+bedroom = Container(locID = nextLocID(), neighbors=[], structure="house", name = "bedroom", coordinates = (10, 0))
 
 livingroom.neighbors.append(copy.deepcopy(bedroom.locID))
 bedroom.neighbors.append(copy.deepcopy(livingroom.locID))
