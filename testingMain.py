@@ -1,5 +1,5 @@
 from testingClasses import *
-from datetime import date, datetime
+from datetime import datetime
 import json
 import os
 import copy
@@ -28,14 +28,14 @@ def nextTempID():
     tempInstanceIDCounter += 1
     return tempInstanceIDCounter
 
-livingroom = Container(locID = nextLocID(), neighbors=[], structure="house",  name = "livingroom")
-bedroom = Container(locID = nextLocID(), neighbors=[], structure="house", name = "bedroom")
+livingroom = Container(locID = nextLocID(), neighbors=[], structure="test",  name = "roomtypeA")
+bedroom = Container(locID = nextLocID(), neighbors=[], structure="test", name = "roomtypeB")
 
 livingroom.neighbors.append(copy.deepcopy(bedroom.locID))
 bedroom.neighbors.append(copy.deepcopy(livingroom.locID))
 
-#locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
-locations = {}
+locations = {livingroom.locID : livingroom, bedroom.locID : bedroom}
+#locations = {}
 
 player = Player()
 player.location = bedroom.locID
@@ -78,6 +78,9 @@ def initData(dataFile="gamedata"):
     except FileNotFoundError:
         print("No such game data exists. ")
 
+def clear_screen():
+    os.system('clear')
+
 def getInput(line):
     quote = input(line)+" "
     usermove = []
@@ -103,7 +106,7 @@ def getRoomNeighborIDs(roomID): #takes the id of a given room, returns a list of
     neighbors = []
     for id in locations[roomID].neighbors:
         neighbors.append(int(id))
-    print(f"neighbors : {neighbors}")
+    #print(f"neighbors : {neighbors}")
     return neighbors
 
 
@@ -128,6 +131,18 @@ def getFreeInvCapacity(player):
     for item in player.inventory:
         totalCapacity -= item.space
     return totalCapacity
+
+def lookAround(player, callType):
+    global locations
+    if callType == "direct":
+        print(f"You are in the {locations[player.location].name}")
+    print("\nYou can go to:")
+    for neighbor in getRoomNeighborIDs(player.location):
+        print(f" - {locations[neighbor].name}")
+    if locations[player.location].items is not {}: 
+        print("And you can see:")
+        for item in locations[player.location].items:
+            print(f" - {item.name}")
 
 def saveGame(player, locations, usermove):
     now = datetime.now() #getting save date and time
@@ -176,25 +191,17 @@ def importData(gamedata):
         rooms[structure] = {}
         for room in gamedata["structures"][structure]["rooms"]:
             newRoom = gamedata["structures"][structure]["rooms"][room]
-            print(f"building: {structure}")
-            print(f"newRoom : {newRoom}")
             newRoomObj = ContainerFormat(structure=structure,
                                     isExit=newRoom["isExit"],
                                     undeadRange=(newRoom["undeadmin"], newRoom["undeadmax"]),
                                     items=newRoom["items"],
                                     name=room)
-            print(f"structure   : {structure}")
-            print(f"isExit      : {newRoom['isExit']}")
-            print(f"undeadRange : {newRoomObj.undeadRange}")
-            print(f"items       : {newRoom['items']}")
-            print(f"name        : {room}")
-            #print(dir(newLocObj))
             rooms[structure][newRoomObj.name] = newRoomObj
 
         templates[structure] = {}
         for template in gamedata["structures"][structure]["templates"]:
             newTemplate = gamedata["structures"][structure]["templates"][template]
-            print(f"newTemplate : {newTemplate}")
+            #print(f"newTemplate : {newTemplate}")
 
             templates[structure][template] = newTemplate
 
@@ -214,7 +221,6 @@ def generateWorld(seed):
 
     currentTemplateID = nextTempID()
     for room in randomTemplateObj:
-        print(f"room: {room}, {randomTemplateObj[room]}\n\n")
         newRoom = Container(locID = nextLocID(),
                             templateID = room,
                             instanceID = currentTemplateID,
@@ -222,15 +228,7 @@ def generateWorld(seed):
                             intendedNeighbors = randomTemplateObj[room]["neighbors"],
                             structure = randomStruct,
                             name = randomTemplateObj[room]["name" if "name" in randomTemplateObj[room] else "type"])
-        print(f"Generating Room: ")
-        print(f"locID : {newRoom.locID}")
-        print(f"templateID : {newRoom.templateID}")
-        print(f"instanceID : {newRoom.instanceID}")
-        print(f"neighbors : {newRoom.neighbors}")
-        print(f"intendedNeighbors : {newRoom.intendedNeighbors}")
-        print(f"structure : {newRoom.structure}")
-        print(f"name : {newRoom.name}")
-        print(f"")
+
         locations[newRoom.locID] = newRoom
     player.location = locations[random.choice(list(locations))].locID
 
@@ -239,11 +237,9 @@ def generateWorld(seed):
             locationA = locations[locA]
             locationB = locations[locB]
             if locationA.instanceID == locationB.instanceID: # if they're from the same instance of a template,
-                #print(f"locationA.templateID : {locationA.templateID}")
-                #print(f"locationB.templateID : {locationB.templateID}")
-                #print(f"locationA.intendedNeighbors : {locationA.intendedNeighbors}")
+
                 if locationB.templateID in locationA.intendedNeighbors: # and they're meant to be neighbors
-                    print(f"{locationA.locID} connected to {locationB.locID}")
+                    #print(f"{locationA.locID} connected to {locationB.locID}")
                     if locationB.locID not in locationA.neighbors:
                         locationA.neighbors.append(locationB.locID)   # connect them.
                     if locationA.locID not in locationB.neighbors:
@@ -275,39 +271,24 @@ def main():
         
         generateWorld(random.randint(1, 1000))
 
-        #os._exit(1)
-
-
 
     #print("executing def main")
     playing = True
     while playing:
-        usermove = getInput("What would you like to do next?  ")
+        usermove = getInput("\n\nWhat would you like to do next?  ")
+        clear_screen()
+        print()
         #print(usermove)
 
         if usermove[0] in commands["go"]:
             goto(placeto=usermove[1], player=player)
-            #for neighbor in getRoomNeighbors(player.location):
-            #    if usermove[1] == neighbor.name:
-            #        player.location = neighbor
-            #        print("You have moved to the " + neighbor.name)
-
+            lookAround(player, "movement")
+            
         elif usermove[0] in commands["quit"]:
             playing = False
 
         elif usermove[0] in commands["look"]:
-            #print(locations)
-            print(f"You are in the {locations[player.location].name}")
-            #print(f"locations: {locations}")
-            print("You can go to:")
-            for neighbor in getRoomNeighborIDs(player.location):
-                #print(f"neighbor : {neighbor}")
-                #print(f"player.location : {player.location}")
-                print(f" - {locations[neighbor].name}")
-            if locations[player.location].items is not {}: 
-                print("And you can see:")
-                for item in locations[player.location].items:
-                    print(f" - {item.name}")
+            lookAround(player, "direct")
 
         elif usermove[0] in commands["grab"]:
             for item in locations[player.location].items:
