@@ -161,7 +161,8 @@ def saveGame(player, locations, usermove):
                             "neighbors" : locations[location].neighbors,
                             "items" : locations[location].items,
                             "structure" : locations[location].structure,
-                            "name" : locations[location].name} for location in locations
+                            "name" : locations[location].name,
+                            "isExit" : locations[location].isExit} for location in locations
         }
     }
 
@@ -189,49 +190,29 @@ def importData(gamedata):
     global templates
     for structure in gamedata["structures"]:
         rooms[structure] = {}
-        for room in gamedata["structures"][structure]["rooms"]:
-            newRoom = gamedata["structures"][structure]["rooms"][room]
-            newRoomObj = ContainerFormat(structure=structure,
-                                    isExit=newRoom["isExit"],
-                                    undeadRange=(newRoom["undeadmin"], newRoom["undeadmax"]),
-                                    items=newRoom["items"],
-                                    name=room)
-            rooms[structure][newRoomObj.name] = newRoomObj
+        try:
+            for room in gamedata["structures"][structure]["rooms"]:
+                newRoom = gamedata["structures"][structure]["rooms"][room]
+                newRoomObj = ContainerFormat(structure=structure,
+                                        isExit=newRoom["isExit"],
+                                        undeadRange=(newRoom["undeadmin"], newRoom["undeadmax"]),
+                                        items=newRoom["items"],
+                                        name=room)
+                rooms[structure][newRoomObj.name] = newRoomObj
 
-        templates[structure] = {}
-        for template in gamedata["structures"][structure]["templates"]:
-            newTemplate = gamedata["structures"][structure]["templates"][template]
-            #print(f"newTemplate : {newTemplate}")
+            templates[structure] = {}
+            for template in gamedata["structures"][structure]["templates"]:
+                newTemplate = gamedata["structures"][structure]["templates"][template]
+                #print(f"newTemplate : {newTemplate}")
 
-            templates[structure][template] = newTemplate
+                templates[structure][template] = newTemplate
+        except KeyError:
+            pass
 
 
     #YET TO CREATE ITEM IMPORTS
 
-def generateWorld(seed):
-    random.seed(seed)
-    global locations
-    global rooms
-    global player
-    global items # YET TO ADD
-    global templates
-
-    randomStruct = random.choice(list(templates))
-    randomTemplateObj = templates[randomStruct][random.choice(list(templates[randomStruct]))]
-
-    currentTemplateID = nextTempID()
-    for room in randomTemplateObj:
-        newRoom = Container(locID = nextLocID(),
-                            templateID = room,
-                            instanceID = currentTemplateID,
-                            neighbors=[],
-                            intendedNeighbors = randomTemplateObj[room]["neighbors"],
-                            structure = randomStruct,
-                            name = randomTemplateObj[room]["name" if "name" in randomTemplateObj[room] else "type"])
-
-        locations[newRoom.locID] = newRoom
-    player.location = locations[random.choice(list(locations))].locID
-
+def updateRoomLinks(locations):
     for locA in locations:
         for locB in locations: # for every combination of two possible locations,
             locationA = locations[locA]
@@ -243,7 +224,50 @@ def generateWorld(seed):
                     if locationB.locID not in locationA.neighbors:
                         locationA.neighbors.append(locationB.locID)   # connect them.
                     if locationA.locID not in locationB.neighbors:
-                        locationB.neighbors.append(locationA.locID)
+                        locationB.neighbors.append(locationA.locID)   # symmetrically.
+
+
+
+def generateWorld(seed):
+    random.seed(seed)
+    global locations
+    global rooms
+    global player
+    global items # YET TO ADD
+    global templates
+
+    while len(locations) < 50:
+        randomStruct = random.choice(list(templates))
+        randomTemplateObj = templates[randomStruct][random.choice(list(templates[randomStruct]))]
+
+        currentTemplateID = nextTempID()
+        for room in randomTemplateObj:
+            roomName = randomTemplateObj[room]["name" if "name" in randomTemplateObj[room] else "type"]
+            roomType = randomTemplateObj[room]["type"]
+            newRoom = Container(locID = nextLocID(),
+                                templateID = room,
+                                instanceID = currentTemplateID,
+                                neighbors=[],
+                                isExit = rooms[randomStruct][roomType].isExit,
+                                intendedNeighbors = randomTemplateObj[room]["neighbors"],
+                                structure = randomStruct,
+                                name = roomName)
+            
+            if rooms[randomStruct][roomType].isExit:
+                exitRoom = newRoom.locID
+
+            locations[newRoom.locID] = newRoom
+
+        # identify the exitRoom of the last created template,
+        # search through a list of all outside locations,
+            # if empty make a new one
+            # if no current streets have available non-designated street connections, make a new one
+            # find a viable street and connect it to there.
+
+    player.location = locations[random.choice(list(locations))].locID
+    
+
+    updateRoomLinks(locations)
     
 
 

@@ -1,6 +1,15 @@
 {
     "structures" : {
+        "street" : {
+            "properties" : {
+                "movementType" : "compass"
+            }
+        },
         "house" : {
+            "properties" : {
+                "neighbors" : ["street"],
+                "movementType" : "roomToRoom"
+            },
             "rooms" : {
                 "entryway" : {
                     "isExit" : true,
